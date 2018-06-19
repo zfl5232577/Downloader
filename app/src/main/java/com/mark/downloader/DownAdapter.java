@@ -9,7 +9,7 @@ import com.mark.download_lib.bean.DownInfo;
 import com.mark.download_lib.download.DownloadTask;
 
 /**
- * Created by WZG on 2016/10/21.
+ * Created by Mark on 2016/10/21.
  */
 
 public class DownAdapter extends RecyclerArrayAdapter<DownloadTask> {

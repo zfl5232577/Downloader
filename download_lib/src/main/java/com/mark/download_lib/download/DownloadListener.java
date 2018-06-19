@@ -12,9 +12,12 @@ import com.mark.download_lib.bean.DownInfo;
  * </pre>
  */
 public interface DownloadListener {
+
+    /**
+     * 任务准备中，在任务队列中暂时未开始
+     */
     void onReady();
     void onStart();
-    void onConflict(DownloadTask task);
     void onNext(DownloadTask task);
     void onFailed();
     void onComplete();

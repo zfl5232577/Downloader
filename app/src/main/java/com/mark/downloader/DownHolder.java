@@ -17,7 +17,7 @@ import com.mark.download_lib.download.DownloadTask;
 
 /**
  * 下载item
- * Created by WZG on 2016/10/21.
+ * Created by Mark on 2016/10/21.
  */
 
 public class DownHolder extends BaseViewHolder<DownloadTask> implements View.OnClickListener, DownloadListener {
@@ -63,6 +63,9 @@ public class DownHolder extends BaseViewHolder<DownloadTask> implements View.OnC
                 break;
             case FINISH:
                 tvMsg.setText("下载完成");
+                if (mDownloadTask.getReadLength()==0){
+                    tvMsg.setText("文件已被删除");
+                }
                 break;
         }
 
@@ -90,11 +93,6 @@ public class DownHolder extends BaseViewHolder<DownloadTask> implements View.OnC
     public void onStart() {
         tvMsg.setText("提示:开始下载");
         time = System.currentTimeMillis();
-    }
-
-    @Override
-    public void onConflict(DownloadTask task) {
-        Toast.makeText(mContext, "任务正在下载...", Toast.LENGTH_SHORT).show();
     }
 
     @Override

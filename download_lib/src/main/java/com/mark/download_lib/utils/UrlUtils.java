@@ -1,6 +1,7 @@
 package com.mark.download_lib.utils;
 
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 
@@ -42,7 +43,7 @@ public class UrlUtils {
      * @return
      */
     public static String getFileName(@NonNull String url) {
-        int index = url.lastIndexOf(File.pathSeparator);
+        int index = url.lastIndexOf("/");
         return url.substring(index + 1);
     }
 
