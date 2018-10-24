@@ -1,8 +1,5 @@
 package com.mark.download_lib.download;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.mark.download_lib.bean.DownInfo;
@@ -10,24 +7,14 @@ import com.mark.download_lib.bean.DownInfoDao;
 import com.mark.download_lib.bean.DownState;
 import com.mark.download_lib.db.DbHelper;
 import com.mark.download_lib.retrofit.DownloadService;
-import com.mark.download_lib.retrofit.RetrofitFactory;
 import com.mark.download_lib.utils.FileUtils;
 import com.mark.download_lib.utils.UrlUtils;
 
-import org.greenrobot.greendao.AbstractDao;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -103,7 +90,25 @@ public class DownloadManager {
     }
 
     private boolean inspectCompleted(@NonNull DownloadTask task) {
-        return task.getState().equals(DownState.FINISH);
+        if (task.getReadLength()==0){
+            return false;
+        }
+        DownInfo info = getDBTaskInfo(task);
+        if (info ==null||info.getTotalSize()==0){
+            //本地任务被删除。文件可能还在，先删除，假如是下载完成的否则可能会下载错误
+            //该情况很少发生，除非用户主动清空本地数据
+            FileUtils.deleteFile(task.getSaveFile());
+            return false;
+        }
+        if (task.getReadLength() == info.getTotalSize()) {
+            DownloadListener listener = task.getDownloadListener();
+            if (listener != null) {
+                listener.onProgress(100, 100);
+                listener.onComplete();
+            }
+            return true;
+        }
+        return false;
     }
 
     private void startDown(@NonNull DownloadTask task) {
@@ -131,7 +136,6 @@ public class DownloadManager {
                             listener.onStart();
                         }
                         task.setState(DownState.DOWN);
-                        savaOrUpdate(task);
                     }
 
                     @Override
@@ -248,6 +252,10 @@ public class DownloadManager {
     }
 
     public boolean contains(@NonNull DownloadTask task) {
-        return mDownInfoDao.queryBuilder().where(DownInfoDao.Properties.Url.eq(task.getUrl())).unique()!=null;
+        return getDBTaskInfo(task) != null;
+    }
+
+    public DownInfo getDBTaskInfo(@NonNull DownloadTask task) {
+        return mDownInfoDao.queryBuilder().where(DownInfoDao.Properties.Url.eq(task.getUrl())).unique();
     }
 }

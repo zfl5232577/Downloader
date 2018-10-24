@@ -1,6 +1,8 @@
 package com.mark.downloader;
 
+import android.os.Build;
 import android.os.Environment;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,14 +22,19 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 public class MainActivity extends AppCompatActivity {
     List<String> urlData = new ArrayList<>();
     int index = 0;
     private DownAdapter mAdapter;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestPermissions(new String[]{READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE},0);
         setContentView(R.layout.activity_down_laod);
         initResource();
         initWidget();
@@ -35,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     /*数据*/
     private void initResource() {
-        urlData.add("http://dldir1.qq.com/weixin/Windows/WeChatSetup.exe");
+        urlData.add("http://swift.aorise.org:8090/v1/AUTH_a11ecbe53dd24868a9c5c76714419992/sc-edu-pub/doc/0de295e6-81d8-4a09-98bc-739ab4f851c2.apk");
         urlData.add("http://dldir1.qq.com/weixin/android/weixin6516android1120.apk");
         urlData.add("https://cdn.llscdn.com/yy/files/tkzpx40x-lls-LLS-5.7-785-20171108-111118.apk");
         urlData.add("https://t.alipayobjects.com/L1/71/100/and/alipay_wap_main.apk");
@@ -49,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addTask(View view) {
-        Log.e("sdsa", "addTask: ");
         if (index == urlData.size()) {
             Toast.makeText(this, "全部添加完毕", Toast.LENGTH_SHORT).show();
             return;
