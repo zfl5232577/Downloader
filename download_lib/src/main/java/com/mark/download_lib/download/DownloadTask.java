@@ -37,6 +37,10 @@ public class DownloadTask implements Comparable<DownloadTask> {
         return mDownloadListener;
     }
 
+    public void setDownloadListener(DownloadListener downloadListener) {
+        mDownloadListener = downloadListener;
+    }
+
     private int getPriority() {
         return mDownInfo.getPriority();
     }

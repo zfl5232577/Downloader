@@ -153,6 +153,7 @@ public class DownloadManager {
                             listener.onFailed();
                         }
                         task.setState(DownState.ERROR);
+                        task.setDownloadListener(null);
                         savaOrUpdate(task);
                     }
 
@@ -164,6 +165,7 @@ public class DownloadManager {
                             listener.onComplete();
                         }
                         task.setState(DownState.FINISH);
+                        task.setDownloadListener(null);
                         savaOrUpdate(task);
                     }
                 });
