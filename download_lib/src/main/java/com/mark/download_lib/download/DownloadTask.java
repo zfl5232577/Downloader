@@ -58,13 +58,7 @@ public class DownloadTask implements Comparable<DownloadTask> {
     }
 
     public long getReadLength(){
-        long readLength=0;
-        File file = getSaveFile();
-        if (file.exists()){
-            readLength = file.length();
-            setReadLength(readLength);
-        }
-        return readLength;
+        return mDownInfo.getReadLength();
     }
 
     public void setReadLength(long readLength) {

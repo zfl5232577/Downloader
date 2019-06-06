@@ -1,11 +1,17 @@
 package com.mark.download_lib.utils;
 
+import android.util.Log;
+
+import com.mark.download_lib.bean.DownState;
 import com.mark.download_lib.db.DbHelper;
 import com.mark.download_lib.download.DownloadTask;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
@@ -29,7 +35,6 @@ public class FileUtils {
     private static final String TAG = FileUtils.class.getSimpleName();
 
     public static void writeFile(@NonNull DownloadTask task, ResponseBody body) throws Exception {
-
         File file = task.getSaveFile();
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
@@ -46,7 +51,7 @@ public class FileUtils {
         MappedByteBuffer mappedBuffer = channelOut.map(FileChannel.MapMode.READ_WRITE,
                 fileSizeDownloaded, fileSize - fileSizeDownloaded);
         int len;
-        while ((len = inputStream.read(fileReader)) != -1) {
+        while (task.getState()== DownState.DOWN &&(len = inputStream.read(fileReader)) != -1) {
             mappedBuffer.put(fileReader, 0, len);
             fileSizeDownloaded += len;
             task.setReadLength(fileSizeDownloaded);
